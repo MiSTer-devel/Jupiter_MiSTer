@@ -168,11 +168,11 @@ wire [1:0] turbo = status[5:4];
 reg ce_pix;
 reg ce_cpu;
 always @(negedge clk_sys) begin
-	reg [2:0] div;
+	reg [3:0] div;
 
 	div <= div + 1'd1;
-	ce_pix <= !div[1:0];
-	ce_cpu <= (!div[2:0] && !turbo) | (!div[1:0] && turbo[0]) | turbo[1];
+	ce_pix <= !div[2:0];
+	ce_cpu <= (!div[3:0] && !turbo) | (!div[2:0] && turbo[0]) | turbo[1];
 end
 
 /////////////////  HPS  ///////////////////////////

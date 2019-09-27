@@ -53,13 +53,16 @@ always @(posedge clk) begin
 			else vcnt <= 0;
 		end
 
-		if (hcnt == 308) hsync <= 0;
+		if (hcnt == 308) begin
+			hsync <= 0;
+			if (vcnt == 248) vsync <= 0;
+			if (vcnt == 256) vsync <= 1;
+		end
+
 		if (hcnt == 340) hsync <= 1;
 		if (hcnt == 000) hen = 1;
 		if (hcnt == 256) hen = 0;
 
-		if (vcnt == 248) vsync <= 0;
-		if (vcnt == 256) vsync <= 1;
 		if (vcnt == 000) ven = 1;
 		if (vcnt == 192) ven = 0;
 
