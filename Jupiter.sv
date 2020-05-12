@@ -306,7 +306,7 @@ assign VGA_F1 = 0;
 
 video_mixer #(280, 1) mixer
 (
-	.clk_sys(CLK_VIDEO),
+	.clk_vid(CLK_VIDEO),
 
 	.ce_pix(ce_pix),
 	.ce_pix_out(CE_PIXEL),

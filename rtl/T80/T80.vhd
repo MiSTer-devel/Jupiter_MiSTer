@@ -258,8 +258,8 @@ architecture rtl of T80 is
 
 begin
 
-	REG <= IntE_FF2 & IntE_FF1 & IStatus & DOR & std_logic_vector(PC) & std_logic_vector(SP) & std_logic_vector(R) & I & Fp & Ap & F & ACC when Alternate = '0' 
-			 else IntE_FF2 & IntE_FF1 & IStatus & DOR(127 downto 112) & DOR(47 downto 0) & DOR(63 downto 48) & DOR(111 downto 64) & 
+	REG <= IntE_FF2 & IntE_FF1 & IStatus & DOR & std_logic_vector(PC) & std_logic_vector(SP) & std_logic_vector(R) & I & Fp & Ap & F & ACC when Alternate = '0'
+			 else IntE_FF2 & IntE_FF1 & IStatus & DOR(127 downto 112) & DOR(47 downto 0) & DOR(63 downto 48) & DOR(111 downto 64) &
 						std_logic_vector(PC) & std_logic_vector(SP) & std_logic_vector(R) & I & Fp & Ap & F & ACC;
 
 	mcode : work.T80_MCode
@@ -403,7 +403,7 @@ begin
 			I_RXDD <= '0';
 
 		elsif rising_edge(CLK_n) then
-		
+
 			if DIRSet = '1' then
 				ACC <= DIR( 7 downto  0);
 				F   <= DIR(15 downto  8);
@@ -571,7 +571,7 @@ begin
 								A <= std_logic_vector(PC);
 							end case;
 						end if;
-						
+
 						if SetWZ = "11" then
 							WZ <= std_logic_vector(ID16);
 						end if;
@@ -604,7 +604,7 @@ begin
 							F(Flag_N) <= '0';
 						end if;
 					end if;
-					
+
 					if (TState = 2 and I_BTR = '1' and IR(0) = '1') or (TState = 1 and I_BTR = '1' and IR(0) = '0') then
 						ioq := ('0' & DI_Reg) + ('0' & std_logic_vector(ID16(7 downto 0)));
 						F(Flag_N) <= DI_Reg(7);
@@ -680,8 +680,8 @@ begin
 							ACC <= I;
 							F(Flag_P) <= IntE_FF2;
 							F(Flag_S) <= I(7);
-							
-							if I = x"00" then 
+
+							if I = x"00" then
 								F(Flag_Z) <= '1';
 							else
 								F(Flag_Z) <= '0';
@@ -697,13 +697,13 @@ begin
 							ACC <= std_logic_vector(R);
 							F(Flag_P) <= IntE_FF2;
 							F(Flag_S) <= R(7);
-							
-							if R = x"00" then 
+
+							if R = x"00" then
 								F(Flag_Z) <= '1';
 							else
 								F(Flag_Z) <= '0';
 							end if;
-							
+
 							F(Flag_Y) <= R(5);
 							F(Flag_H) <= '0';
 							F(Flag_X) <= R(3);
@@ -1075,7 +1075,7 @@ begin
 			BusReq_s <= '0';
 			NMI_s <= '0';
 		elsif rising_edge(CLK_n) then
-		
+
 			if DIRSet = '1' then
 				IntE_FF2 <= DIR(211);
 				IntE_FF1 <= DIR(210);
@@ -1084,7 +1084,7 @@ begin
 					NMI_s <= '1';
 				end if;
 				OldNMI_n := NMI_n;
-				
+
 				if CEN = '1' then
 					BusReq_s <= not BUSRQ_n;
 					Auto_Wait_t2 <= Auto_Wait_t1;

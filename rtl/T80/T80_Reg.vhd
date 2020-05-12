@@ -112,7 +112,7 @@ begin
 
 				RegsL(1) <= DIR( 23 downto  16);
 				RegsH(1) <= DIR( 31 downto  24);
-				
+
 				RegsL(2) <= DIR( 39 downto  32);
 				RegsH(2) <= DIR( 47 downto  40);
 

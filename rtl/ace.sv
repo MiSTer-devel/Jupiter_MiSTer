@@ -126,7 +126,7 @@ dpram #(15) eram
 );
 
 wire [7:0] rom_dout;
-dpram #(.ADDRWIDTH(13), .MEM_INIT_FILE("ace.mif")) rom
+dpram #(.ADDRWIDTH(13), .MEM_INIT_FILE("rtl/ace.mif")) rom
 (
 	.clock(clk),
 	.address_a(cpu_addr[12:0]),
