@@ -37,8 +37,9 @@ module emu
 	output        CE_PIXEL,
 
 	//Video aspect ratio for HDMI. Most retro systems have ratio 4:3.
-	output [11:0] VIDEO_ARX,
-	output [11:0] VIDEO_ARY,
+	//if VIDEO_ARX[12] or VIDEO_ARY[12] is set then [11:0] contains scaled size instead of aspect ratio.
+	output [12:0] VIDEO_ARX,
+	output [12:0] VIDEO_ARY,
 
 	output  [7:0] VGA_R,
 	output  [7:0] VGA_G,
@@ -49,6 +50,9 @@ module emu
 	output        VGA_F1,
 	output [1:0]  VGA_SL,
 	output        VGA_SCALER, // Force VGA scaler
+
+	input  [11:0] HDMI_WIDTH,
+	input  [11:0] HDMI_HEIGHT,
 
 `ifdef USE_FB
 	// Use framebuffer in DDRAM (USE_FB=1 in qsf)
@@ -181,11 +185,18 @@ assign BUTTONS   = 0;
 assign VGA_SCALER= 0;
 
 wire [1:0] ar = status[9:8];
+video_freak video_freak
+(
+	.*,
+	.VGA_DE_IN(VGA_DE),
+	.VGA_DE(),
 
-assign VIDEO_ARX = (!ar) ? 12'd4 : (ar - 1'd1);
-assign VIDEO_ARY = (!ar) ? 12'd3 : 12'd0;
-
-wire [1:0] scale = status[3:2];
+	.ARX((!ar) ? 12'd4 : (ar - 1'd1)),
+	.ARY((!ar) ? 12'd3 : 12'd0),
+	.CROP_SIZE(0),
+	.CROP_OFF(0),
+	.SCALE(status[11:10])
+);
 
 `include "build_id.v"
 parameter CONF_STR = {
@@ -195,6 +206,7 @@ parameter CONF_STR = {
 	"-;",
 	"O89,Aspect ratio,Original,Full Screen,[ARC1],[ARC2];",
 	"O23,Scandoubler Fx,None,HQ2x,CRT 25%,CRT 50%;",
+	"OAB,Scale,Normal,V-Integer,Narrower HV-Integer,Wider HV-Integer;",
 	"-;",
 	"O45,CPU Speed,Normal,x2,x4;",
 	"R0,Reset;",
@@ -343,6 +355,8 @@ ace ace
 
 keyboard keyboard (.*);
 
+wire [1:0] scale = status[3:2];
+
 assign AUDIO_L = {1'b0, spk, mic, 13'd0};
 assign AUDIO_R = AUDIO_L;
 assign AUDIO_MIX = 0;
@@ -355,32 +369,19 @@ assign VGA_F1 = 0;
 
 video_mixer #(280, 1) mixer
 (
-	.clk_vid(CLK_VIDEO),
-
-	.ce_pix(ce_pix),
-	.ce_pix_out(CE_PIXEL),
-
+	.*,
 	.hq2x(scale == 1),
-	.scanlines(0),
 	.scandoubler(scale || forced_scandoubler),
+	.gamma_bus(),
 
 	.R({4{video_out}}),
 	.G({4{video_out}}),
 	.B({4{video_out}}),
 
-	.mono(0),
-
 	.HSync(~hsync),
 	.VSync(~vsync),
 	.HBlank(hblank),
-	.VBlank(vblank),
-
-	.VGA_R(VGA_R),
-	.VGA_G(VGA_G),
-	.VGA_B(VGA_B),
-	.VGA_VS(VGA_VS),
-	.VGA_HS(VGA_HS),
-	.VGA_DE(VGA_DE)
+	.VBlank(vblank)
 );
 
 endmodule
